@@ -1,18 +1,18 @@
 package users
 
+import "time"
+
+// 1. The Data Structure
 type User struct {
-	ID    string `json:"id"`
-	Email string `json:"email"`
+	ID        int       `json:"id"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
-/* Combining Repository and service files to simplify process
-// The Repository Interface (Port)
-type Repository interface {
-	FindByID(id int) (*User, error)
+// 2. The Interface (The Port)
+// This defines what the repository MUST do.
+type UserRepository interface {
+	FindByID(id int) (User, error)
+	FindByUsername(username string) (User, error)
 }
-*/
-
-// // The Service Interface (Port). This should be in service file
-// type Service interface {
-// 	GetUser(id int) (User, error)
-// }

@@ -1,26 +1,38 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/Chandra5468/todo-go/internal/modules/users"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // If you want u can separate repository and service logic if needed
 
 type Service interface {
-	GetUser(id int) (users.User, error)
+	GetUserDetails(id int) (users.User, error)
 }
 
 type svc struct {
-	db *pgxpool.Pool
+	repo users.UserRepository
 }
 
-func NewService(db *pgxpool.Pool) Service {
+func NewService(repo users.UserRepository) Service {
 	return &svc{
-		db: db,
+		repo: repo,
 	}
 }
 
-func (s *svc) GetUser(id int) (users.User, error) {
-	return users.User{}, nil
+func (s *svc) GetUserDetails(id int) (users.User, error) {
+
+	// Business Logic: Check if user exists
+	user, err := s.repo.FindByID(id)
+	if err != nil {
+		return users.User{}, err
+	}
+	if user.Username == "" {
+		return users.User{}, errors.New("user not found")
+	}
+
+	return user, nil
+
 }

@@ -13,6 +13,7 @@ import (
 	todoDeliveryHandler "github.com/Chandra5468/todo-go/internal/modules/todos/delivery"
 	todosService "github.com/Chandra5468/todo-go/internal/modules/todos/service"
 	usersDeliveryHandler "github.com/Chandra5468/todo-go/internal/modules/users/delivery"
+	usersRepo "github.com/Chandra5468/todo-go/internal/modules/users/repository"
 	usersService "github.com/Chandra5468/todo-go/internal/modules/users/service"
 	psqlConnection "github.com/Chandra5468/todo-go/internal/platform_common/database/postgresql"
 	"github.com/go-chi/chi/v5"
@@ -52,8 +53,9 @@ func main() {
 
 	todosService := todosService.NewService(psqlPool)
 	todoDeliveryHandler.NewHandler(r, todosService)
-	usersService := usersService.NewService(psqlPool)
-	usersDeliveryHandler.NewHandler(r, usersService)
+	userRepository := usersRepo.NewRepo(psqlPool)
+	usersServices := usersService.NewService(userRepository)
+	usersDeliveryHandler.NewHandler(r, usersServices)
 
 	// 4. http Server declaration
 	srv := &http.Server{
