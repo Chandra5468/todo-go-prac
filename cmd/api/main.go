@@ -10,13 +10,14 @@ import (
 	"syscall"
 	"time"
 
-	psqlConnection "github.com/Chandra5468/todo-go/internal/database/postgresql"
 	todoDeliveryHandler "github.com/Chandra5468/todo-go/internal/modules/todos/delivery"
 	todosRepo "github.com/Chandra5468/todo-go/internal/modules/todos/repository"
 	todosService "github.com/Chandra5468/todo-go/internal/modules/todos/service"
 	usersDeliveryHandler "github.com/Chandra5468/todo-go/internal/modules/users/delivery"
 	usersRepo "github.com/Chandra5468/todo-go/internal/modules/users/repository"
 	usersService "github.com/Chandra5468/todo-go/internal/modules/users/service"
+	psqlConnection "github.com/Chandra5468/todo-go/internal/platform/database/postgresql"
+	"github.com/Chandra5468/todo-go/internal/platform/external/notifications"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
@@ -52,12 +53,15 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
+	// external api's
+	notifier := notifications.NewEmailClient()
+
 	todosRepository := todosRepo.NewRepo(psqlPool)
 	todosService := todosService.NewService(todosRepository)
 	todoDeliveryHandler.NewHandler(r, todosService)
 
 	userRepository := usersRepo.NewRepo(psqlPool)
-	usersServices := usersService.NewService(userRepository)
+	usersServices := usersService.NewService(userRepository, notifier)
 	usersDeliveryHandler.NewHandler(r, usersServices)
 
 	// 4. http Server declaration

@@ -16,3 +16,8 @@ type UserRepository interface {
 	FindByID(id int) (User, error)
 	FindByUsername(username string) (User, error)
 }
+
+// For external api calls
+type NotificationSender interface {
+	SendWelcomeEmail(userID int) error
+}

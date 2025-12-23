@@ -13,12 +13,14 @@ type Service interface {
 }
 
 type svc struct {
-	repo users.UserRepository
+	repo     users.UserRepository
+	notifier users.NotificationSender
 }
 
-func NewService(repo users.UserRepository) Service {
+func NewService(repo users.UserRepository, notifier users.NotificationSender) Service {
 	return &svc{
-		repo: repo,
+		repo:     repo,
+		notifier: notifier,
 	}
 }
 
