@@ -1,18 +1,20 @@
 package service
 
-import "github.com/jackc/pgx/v5/pgxpool"
+import (
+	"github.com/Chandra5468/todo-go/internal/modules/todos"
+)
 
 type Service interface {
 	GetTodoList()
 }
 
 type svc struct {
-	db *pgxpool.Pool
+	repo todos.TodoRepo
 }
 
-func NewService(db *pgxpool.Pool) Service {
+func NewService(repo todos.TodoRepo) Service {
 	return &svc{
-		db: db,
+		repo: repo,
 	}
 }
 
